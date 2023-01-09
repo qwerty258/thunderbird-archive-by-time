@@ -1,0 +1,25 @@
+{
+    "manifest_version": 2,
+    "name": "archive-by-time",
+    "description": "Sort emails in selected folder into new folder with year appended for archive",
+    "version": "0.1",
+    "author": "yaofei zheng",
+    "applications": {
+        "gecko": {
+            "id": "yaofei@www",
+            "strict_min_version": "78.0"
+        }
+    },
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "permissions": [
+        "accountsFolders",
+        "accountsRead",
+        "menus",
+        "messagesMove",
+        "messagesRead"
+    ]
+}
