@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+zip archive-by-time.xpi background.js manifest.json
+
