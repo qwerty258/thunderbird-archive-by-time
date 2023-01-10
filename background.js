@@ -18,37 +18,53 @@ browser.menus.create({
     title: "Archive by Year",
     contexts: ["folder_pane"],
     async onclick(info) {
+        console.log("onclick--------------------");
         console.log(info.selectedFolder);
-        const page = await messenger.messages.list(info.selectedFolder);
+        const objMsgList = await messenger.messages.list(info.selectedFolder);
 
-        console.log(page);
-        for await (item of page.messages) {
-            let msgIDArrays = [];
-            console.log("item--------------------");
-            console.log(item);
-            msgIDArrays.push(item.id);
-            let newEmailFolderName = info.selectedFolder.name + "." + item.date.getFullYear();
-            console.log(newEmailFolderName);
-            let newFolderObject;
-            let findret = findFolder(info.selectedFolder.subFolders, newEmailFolderName);
+        console.log(objMsgList);
+
+        let ArrayEmailListByYear = [];
+
+        for await (objEmailMsg of objMsgList.messages) {
+            console.log("objEmailMsg start--------------------");
+            let itemYear = objEmailMsg.date.getFullYear();
+
+            let i;
+            for (i = 0; i < ArrayEmailListByYear.length; i++) {
+                if (ArrayEmailListByYear[i].year === itemYear) {
+                    ArrayEmailListByYear[i].arrayMsgID.push(objEmailMsg.id);
+                    break;
+                }
+            }
+
+            if (i === ArrayEmailListByYear.length) {
+                ArrayEmailListByYear.push({
+                    year: itemYear,
+                    arrayMsgID: [objEmailMsg.id]
+                });
+            }
+        }
+
+        console.log(ArrayEmailListByYear);
+
+        for await (it of ArrayEmailListByYear) {
+            console.log("create start--------------------");
+            console.log(it);
+            let strNewEmailFolderName = info.selectedFolder.name + "." + it.year;
+            let objectNewFolder;
+            let findret = findFolder(info.selectedFolder.subFolders, strNewEmailFolderName);
             console.log(findret);
             if (findret.ret) {
-                newFolderObject = findret.folder;
-            }
-            else {
-                // TODO: fix me
-                // the global 'info.selectedFolder' is not updated after this call and
-                // will leads to create error for folder already exists
-                newFolderObject = await messenger.folders.create(
+                objectNewFolder = findret.folder;
+            } else {
+                objectNewFolder = await messenger.folders.create(
                     info.selectedFolder,
-                    newEmailFolderName
+                    strNewEmailFolderName
                 );
             }
 
-            console.log(newFolderObject);
-
-            console.log(msgIDArrays);
-            await messenger.messages.move(msgIDArrays, newFolderObject);
+            await messenger.messages.move(it.arrayMsgID, objectNewFolder);
         }
     },
 });
