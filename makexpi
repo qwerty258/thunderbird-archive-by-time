@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-zip archive-by-time.xpi \
+GIT_TAG=$(git describe --tags)
+
+zip archive-by-time.${GIT_TAG}.xpi \
     README.md           \
     background.js       \
     license.md          \
