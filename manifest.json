@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "archive-by-time",
     "description": "Sort emails in selected folder into new folder with year appended for archive",
-    "version": "0.1",
+    "version": "0.2",
     "author": "yaofei zheng",
     "applications": {
         "gecko": {
