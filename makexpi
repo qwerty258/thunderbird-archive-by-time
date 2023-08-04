@@ -3,6 +3,7 @@
 GIT_TAG=$(git describe --tags)
 
 zip archive-by-time.${GIT_TAG}.xpi \
+    options/*           \
     README.md           \
     background.js       \
     license.md          \
