@@ -146,15 +146,16 @@ browser.menus.create({
     async onclick(info) {
 
         if (!("selectedAccount" in info)) {
+            console.log("Please run this on \"Local Folder\"");
             return;
         }
 
         if ("none" != info.selectedAccount.type) {
+            console.log("Please run this on \"Local Folder\"");
             return;
         }
 
         for (it of info.selectedAccount.folders) {
-            console.log(it)
             if (it.path === "/Archives") {
                 continue;
             } else if (it.path === "/Unsent Messages") {
