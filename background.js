@@ -13,7 +13,7 @@ function findFolder(array, string2find) {
     };
 }
 
-function process_folder(folder) {
+async function process_folder(folder) {
     // objMsgList:
     // Object {
     //      id: null,
@@ -41,7 +41,7 @@ function process_folder(folder) {
     //              subject: "subject"
     //              tags: Array []}
     //          length: 1]}
-    objMsgList = messenger.messages.list(folder);
+    objMsgList = await messenger.messages.list(folder);
     if (typeof objMsgList.messages === "undefined") {
         return;
     }
@@ -59,7 +59,7 @@ function process_folder(folder) {
     // because the `info.selectedFolder.subFolders` was not updated
     // when new subfolders were created in this onclick callback
     do {
-        for (objEmailMsg of objMsgList.messages) {
+        for await (objEmailMsg of objMsgList.messages) {
             let itemYear = objEmailMsg.date.getFullYear();
             // filter out email less than current year
             if (current_year <= itemYear)
@@ -83,7 +83,7 @@ function process_folder(folder) {
 
         if (null !== objMsgList.id) {
             // console.log(objMsgList.id);
-            objMsgList = messenger.messages.continueList(objMsgList.id);
+            objMsgList = await messenger.messages.continueList(objMsgList.id);
             // console.log(objMsgList);
             // console.log(objMsgList.id);
         }
@@ -94,7 +94,7 @@ function process_folder(folder) {
     // loop through the array of email msg id and year
     // create folder if the year does not exists and
     // move email to corresponding folder
-    for (it of ArrayEmailListByYear) {
+    for await (it of ArrayEmailListByYear) {
         // console.log(it);
         let strNewEmailFolderName = folder.name + "." + it.year;
         let objectNewFolder;
@@ -103,13 +103,13 @@ function process_folder(folder) {
         if (find_result.ret) {
             objectNewFolder = find_result.folder;
         } else {
-            objectNewFolder = messenger.folders.create(
+            objectNewFolder = await messenger.folders.create(
                 folder,
                 strNewEmailFolderName
             );
         }
 
-        messenger.messages.move(it.arrayMsgID, objectNewFolder);
+        await messenger.messages.move(it.arrayMsgID, objectNewFolder);
     }
 }
 
@@ -135,7 +135,7 @@ browser.menus.create({
 
         // all the console.log() were used to determine the variable type and content.
         // unlike strong typed C, C++, C# or java, this is bad.
-        process_folder(info.selectedFolder)
+        await process_folder(info.selectedFolder)
     },
 });
 
@@ -164,8 +164,8 @@ browser.menus.create({
             } else if (it.path.includes("Inbox")) {
                 continue;
             } else {
-                process_folder(it);
+                await process_folder(it);
             }
         }
-    }
+    },
 });
