@@ -20,7 +20,6 @@
         "accountsRead",
         "menus",
         "messagesMove",
-        "messagesRead",
-        "storage"
+        "messagesRead"
     ]
 }
